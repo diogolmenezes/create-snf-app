@@ -5,6 +5,8 @@ const commander = require('commander');
 const packageJson = require('./package.json');
 const fs = require('fs-extra');
 const path = require('path');
+const hyperquest = require('hyperquest');
+const unpack = require('tar-pack').unpack;
 
 let projectName;
 
@@ -48,42 +50,25 @@ function createApp(name) {
     console.log();
 
 
-    const package = {
-        name,
-        version: '1.0.0',
-        description: '',
-        main: 'index.js',
-        scripts: {
-            test: 'clear;nyc --reporter=html --reporter=lcov --reporter=text-lcov --reporter=text --report-dir=test-reports ./node_modules/mocha/bin/mocha ./api/modules/*/test/unit/*.unit.js --timeout 12000',
-            start: 'clear; rm -rf logs/*.log*; nodemon index.js;',
-            'test:dev': 'clear;./node_modules/mocha/bin/mocha ./api/modules/*/test/unit/*.unit.js --timeout 12000',
-            integration: 'clear;./node_modules/mocha/bin/mocha ./api/modules/*/test/integration/*.integration.js',
-            lint: 'clear; ./node_modules/.bin/eslint api/*',
-            'doc:edit': 'clear; swagger_swagger_fileName=doc/swagger.yaml swagger project edit',
-            'doc:update': 'clear; js-yaml doc/swagger.yaml >> doc/swagger.json'
-        },
-        dependencies: {
-            mongoose: '^5.4.19',
-            'simple-node-framework': '^1.0.0',
-        },
-        devDependencies: {
-            chai: "^4.2.0",
-            'eslint': "^5.15.3",
-            'eslint-config-airbnb-base': '^13.1.0',
-            'eslint-plugin-chai-friendly': '^0.4.1',
-            'eslint-plugin-import': '^2.16.0',
-            istanbul: '^0.4.5',
-            'js-yaml': '^3.13.0',
-            mocha: '^6.0.2',
-            nyc: '^13.3.0',
-            sinon: '^7.3.0',
-            supertest: '^4.0.2'
-        }
-    }
+    console.log('Installing packages. This might take a couple of minutes.');
+
+    let stream = hyperquest('https://github.com/facebook/create-react-app/blob/master/packages/create-react-app/createReactApp.js');
 
 
-    fs.copy('./_bootstrap/sample.js', root + '/sample.js')
-        .then(() => console.log('success!'))
-        .catch(err => console.error(err))
+    extractStream(stream, root);
 
 }
+
+function extractStream(stream, dest) {
+    return new Promise((resolve, reject) => {
+      stream.pipe(
+        unpack(dest, err => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(dest);
+          }
+        })
+      );
+    });
+  }
