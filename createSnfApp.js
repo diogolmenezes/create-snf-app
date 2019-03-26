@@ -9,6 +9,7 @@ const hyperquest = require('hyperquest');
 const unpack = require('tar-pack').unpack;
 
 let projectName;
+let bootstrapURL = 'https://github.com/diogolmenezes/create-snf-app/blob/master/snf.tar?raw=true';
 
 const program = new commander.Command(packageJson.name)
     .version(packageJson.version)
@@ -37,10 +38,9 @@ if (typeof projectName === 'undefined') {
     process.exit(1);
 }
 
+createApp(projectName, bootstrapURL);
 
-createApp(projectName);
-
-function createApp(name) {
+function createApp(name, url) {
     const root = path.resolve(name);
     const appName = path.basename(root);
 
@@ -51,10 +51,10 @@ function createApp(name) {
 
 
     console.log('Installing packages. This might take a couple of minutes.');
+    console.log(url);
 
-    let stream = hyperquest('https://github.com/facebook/create-react-app/blob/master/packages/create-react-app/createReactApp.js');
-
-
+    let stream = hyperquest(url);
+    
     extractStream(stream, root);
 
 }
