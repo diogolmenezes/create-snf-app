@@ -1,0 +1,25 @@
+{
+  "name": "create-snf-app",
+  "version": "1.0.4",
+  "keywords": [
+    "simple-node-framework"
+  ],
+  "description": "Create simple-node-framework apps.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=8"
+  },
+  "files": [
+    "index.js",
+    "createSnfApp.js"
+  ],
+  "bin": {
+    "create-snf-app": "./index.js"
+  },
+  "dependencies": {
+    "chalk": "2.4.2",
+    "commander": "2.19.0",
+    "fs-extra": "^7.0.1",
+    "path": "^0.12.7"
+  }
+}
