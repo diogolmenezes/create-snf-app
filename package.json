@@ -1,6 +1,6 @@
 {
   "name": "create-snf-app",
-  "version": "1.0.4",
+  "version": "1.0.7",
   "keywords": [
     "simple-node-framework"
   ],
@@ -23,6 +23,7 @@
     "hyperdirect": "0.0.0",
     "hyperquest": "^2.1.3",
     "path": "^0.12.7",
+    "recursive-readdir": "^2.2.2",
     "tar-pack": "^3.4.1"
   }
 }
