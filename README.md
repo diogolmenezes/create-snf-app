@@ -5,7 +5,7 @@ create-snf-app is an officially supported way to create [simple-node-framework](
 ## Quick Start
 
 ```shell
-npx create-snf-app my-app --disable-database --disable-redis
+npx create-snf-app my-app --disable-database --disable-redis -p 8091
 cd my-app
 npm start
 ```
@@ -50,7 +50,10 @@ Go to the [docs](https://github.com/diogolmenezes/simple-node-bootstrap) if do y
 │   ├── config
 │   │   ├── custom-server.js
 │   │   └── env
-│   │       └── default.json
+│   │       ├── default.json
+│   │       ├── production.json
+│   │       ├── staging.json
+│   │       └── testing.json
 │   └── modules
 │       └── sample-module
 │           ├── controller.js
@@ -79,6 +82,6 @@ Go to the [docs](https://github.com/diogolmenezes/simple-node-bootstrap) if do y
 │   └── swagger.yaml
 ├── index.js
 ├── logs
-├── README.md
-└── package.json
+├── package.json
+└── README.md
 ```

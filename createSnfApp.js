@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 'use strict';
 
 let program;
@@ -118,34 +119,38 @@ function replaceParameters(path, name, port) {
     const changes = replace.sync({
         verbose: true,
         files: `${path}/**`,
-        from: [/my-application/g, /8094/g],
+        from: [/my-application/g, /8090/g],
         to: [name, port],
     });
 
     if (program.disableDatabase || program.disableRedis) {
-        const configPath = `${path}/api/config/env/default.json`;
-        const conf = require(configPath);
+        const environments = ['default', 'testing', 'staging', 'production'];
 
-        if (program.disableDatabase) {
-            delete conf.db;
-        }
+        environments.map(env => {
+            const configPath = `${path}/api/config/env/${env}.json`;
+            const conf = require(configPath);
 
-        if (program.disableRedis) {
-            delete conf.redis;
-            delete conf.cache;
-            delete conf.session;
-        }
+            if (program.disableDatabase) {
+                delete conf.db;
+            }
 
-        if (program.disableCache) {
-            delete conf.cache;
-        }
+            if (program.disableRedis) {
+                delete conf.redis;
+                delete conf.cache;
+                delete conf.session;
+            }
 
-        if (program.disableSession) {
-            delete conf.session;
-        }
+            if (program.disableCache) {
+                delete conf.cache;
+            }
 
-        fs.writeFileSync(configPath, JSON.stringify(conf, null, 4), 'utf8', function (err) {
-            if (err) return console.log(err);
+            if (program.disableSession) {
+                delete conf.session;
+            }
+
+            fs.writeFileSync(configPath, JSON.stringify(conf, null, 4), 'utf8', function (err) {
+                if (err) return console.log(err);
+            });
         });
     }
 
