@@ -11,7 +11,7 @@ const hyperquest = require('hyperquest');
 const unpack = require('tar-pack').unpack;
 
 let projectName;
-let bootstrapURL = 'https://github.com/diogolmenezes/create-snf-app/blob/master/snf:version.tar.gz?raw=true';
+let bootstrapURL = 'https://github.com/diogolmenezes/create-snf-app/blob/master/packages/snf.tar.gz?raw=true';
 
 const program = new commander.Command(packageJson.name)
     .version(packageJson.version)
@@ -43,86 +43,20 @@ if (typeof projectName === 'undefined') {
 
 createApp(projectName, bootstrapURL);
 
-function getBootstrapFile(url, version) {    
+function getBootstrapFile(url, version) {
     let _url = url.replace(':version', `-${version}` || '');
 
     console.log(`Downloading the bootstrap from ${_url}`);
-    
+
     console.log('This might take a couple of minutes.');
-    
+
     // if you want to download a file that its not hosted at github just use this
     // let stream = hyperquest(_url);
     // if you want to download github hosted files use this:
-    var request = require('hyperdirect')(2);
-    let stream = request(_url);
+    const request = require('hyperdirect')(2);
+    const stream = request(_url);
 
     return stream;
-}
-
-function createApp(name, url) {
-    const root = path.resolve(name);
-    const appName = path.basename(root);
-
-    fs.ensureDirSync(name);
-
-    console.log(`Creating a new simple-node-framework app in ${chalk.green(root)}.`);
-    console.log();
-
-
-    
-
-
-    // if you want to download a file that its not hosted at github just use this
-    // let stream = hyperquest(url);
-
-    // if you want to download github hosted files use this:
-    var request = require('hyperdirect')(2);
-    let stream = request(url);
-
-    // baixar
-    // extrair
-    // substituir
-
-
-
-
-
-
-
-
-    // console.log('ROOT =>', root);
-    // console.log('APPNAME =>', appName);
-    // console.log('DIRNAME =>', path.dirname(root));
-
-    // fs.writeFileSync(
-    //     path.join(root, 'package.json'),
-    //     JSON.stringify('teste')
-    // );
-
-    // fs.mkdir(path.join(root, 'oi'));
-
-    // fs.writeFileSync(
-    //     path.join(root, 'oi/package.json'),
-    //     JSON.stringify('teste')
-    // );
-
-
-    // var recursive = require("recursive-readdir");
-
-    // recursive(root, function (err, files) {
-    //     // `files` is an array of file paths
-    //     console.log(files);
-    // });
-
-    // console.log(process.cwd())
-
-    // // if you want to download github hosted files use this:
-    // var request = require('hyperdirect')(2);
-    // let stream = request(url);
-
-    // extractStream(stream, root);
-
-    console.log(`Success!`);
 }
 
 function extractStream(stream, dest) {
@@ -137,4 +71,22 @@ function extractStream(stream, dest) {
             })
         );
     });
+}
+
+function createApp(name, url) {
+    const root = path.resolve(name);
+    const appName = path.basename(root);
+
+    fs.ensureDirSync(name);
+
+    console.log(`Creating a new simple-node-framework app in ${chalk.green(root)}.`);
+    console.log();
+
+    const stream = getBootstrapFile(bootstrapURL, program.release);
+
+    extractStream(stream, root);
+
+    // // substituir
+
+    console.log(`Success!`);
 }
