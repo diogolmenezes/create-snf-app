@@ -9,6 +9,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const unpack = require('tar-pack').unpack;
 const replace = require('replace-in-file');
+const execa = require('execa');
 
 let projectName;
 let bootstrapURL = 'https://github.com/diogolmenezes/create-snf-app/blob/master/packages/snf.tar.gz?raw=true';
@@ -46,12 +47,12 @@ createApp(projectName, bootstrapURL);
 function getBootstrapFile(url, version) {
     let _url = url.replace(':version', `-${version}` || '');
 
-    console.log(`Downloading the bootstrap from ${chalk.green(_url)}`);    
+    console.log(`Downloading the bootstrap from ${chalk.green(_url)}`);
     console.log('This might take a couple of minutes.');
     console.log();
 
     const request = require('request');
-    const stream  = request(_url);
+    const stream = request(_url);
 
     return stream;
 }
@@ -98,5 +99,26 @@ async function createApp(name, url) {
 
     replaceParameters(root, name, program.port);
 
-    console.log(`${chalk.green('Success!')}`);
+    await npmInstall(root);
+
+    console.log(`${chalk.green('SUCCESS!')} Go to ${chalk.blue(name)} directory and run ${chalk.blue('npm start')} to start your app`);
+    console.log();
+    console.log('Documentation:');
+    console.log();
+    console.log(`  Simple node framework: ${chalk.rgb(219, 126, 54)('https://github.com/diogolmenezes/simple-node-framework')}`);
+    console.log(`  Simple node bootstrap: ${chalk.rgb(219, 126, 54)('https://github.com/diogolmenezes/simple-node-bootstrap')}`);
+    console.log(`  SNF create app: ${chalk.rgb(219, 126, 54)('https://github.com/diogolmenezes/create-snf-app')}`);
+    console.log();
+}
+
+async function npmInstall(path) {
+    process.chdir(path)
+    console.log(`Running npm install...`);
+    console.log('This might take a couple of minutes.');
+    console.log();
+    const {
+        stdout
+    } = await execa('npm', ['i']);
+    console.log(stdout);
+    console.log();
 }
