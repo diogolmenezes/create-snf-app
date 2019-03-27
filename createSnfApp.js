@@ -74,7 +74,6 @@ function extractStream(stream, dest) {
 
 function createApp(name, url) {
     const root = path.resolve(name);
-    const appName = path.basename(root);
 
     fs.ensureDirSync(name);
 
