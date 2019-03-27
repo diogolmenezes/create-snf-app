@@ -41,7 +41,9 @@ Now you can run:
 
 ## Output
 
-Running any of these commands will create a directory called my-app inside the current folder. Inside that directory, it will generate the initial simple-node-framework project structure and install the transitive dependencies:
+Running any of these commands will create a directory called my-app inside the current folder. Inside that directory, it will generate the initial simple-node-framework project structure and install the transitive dependencies.
+
+Go to the [docs](https://github.com/diogolmenezes/simple-node-bootstrap) if do you need more details about the used *bootstrap*.
 
 ```shell
 ├── api
