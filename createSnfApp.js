@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-
 'use strict';
 
+let program;
 const chalk = require('chalk');
 const commander = require('commander');
 const packageJson = require('./package.json');
@@ -10,55 +10,67 @@ const path = require('path');
 const unpack = require('tar-pack').unpack;
 const replace = require('replace-in-file');
 const execa = require('execa');
+const bootstrapURL = 'https://github.com/diogolmenezes/create-snf-app/blob/master/packages/snf:version.tar.gz?raw=true';
 
-let projectName;
-let bootstrapURL = 'https://github.com/diogolmenezes/create-snf-app/blob/master/packages/snf.tar.gz?raw=true';
+// start create-nfs-app
+init();
 
-const program = new commander.Command(packageJson.name)
-    .version(packageJson.version)
-    .arguments('<project-directory>')
-    .usage(`${chalk.green('<project-directory>')} [options]`)
-    .action(name => {
-        projectName = name;
-    })
-    .option('-p, --port <n>', 'Define the server port', parseInt)
-    .option('-r, --release <value>', 'SNF bootstrap release number')
-    .option('--disable-mongo', 'Whithout mongo support (you can turn it on later)')
-    .option('--disable-redis', 'Whithout redis, cache and session support (you can turn it on later)')
-    .option('--disable-cache', 'Whithout cache support (you can turn it on later)')
-    .option('--disable-session', 'Whithout session support (you can turn it on later)')
-    .option('--disable-install', 'Dont run npm install')
-    .allowUnknownOption()
-    .parse(process.argv);
+function init() {
+    let projectName;
 
-if (typeof projectName === 'undefined') {
-    console.error('Please specify the project directory:');
-    console.log(
-        `  ${chalk.cyan(program.name())} ${chalk.green('<project-directory>')}`
-    );
-    console.log();
-    console.log('For example:');
-    console.log(`  ${chalk.cyan(program.name())} ${chalk.green('my-snf-app')}`);
-    console.log();
-    console.log(
-        `Run ${chalk.cyan(`${program.name()} --help`)} to see all options.`
-    );
-    process.exit(1);
+    program = new commander.Command(packageJson.name)
+        .version(packageJson.version)
+        .arguments('<project-directory>')
+        .usage(`${chalk.green('<project-directory>')} [options]`)
+        .action(name => {
+            projectName = name;
+        })
+        .option('-p, --port <n>', 'Define the server port', parseInt)
+        .option('-r, --release <value>', 'SNF bootstrap release number')
+        .option('--disable-database', 'Whithout database support (you can turn it on later)')
+        .option('--disable-redis', 'Whithout redis, cache and session support (you can turn it on later)')
+        .option('--disable-cache', 'Whithout cache support (you can turn it on later)')
+        .option('--disable-session', 'Whithout session support (you can turn it on later)')
+        .option('--disable-install', 'Dont run npm install')
+        .allowUnknownOption()
+        .parse(process.argv);
+
+    if (typeof projectName === 'undefined') {
+        console.error('Please specify the project directory:');
+        console.log(
+            `  ${chalk.cyan(program.name())} ${chalk.green('<project-directory>')}`
+        );
+        console.log();
+        console.log('For example:');
+        console.log(`  ${chalk.cyan(program.name())} ${chalk.green('my-snf-app')}`);
+        console.log();
+        console.log(
+            `Run ${chalk.cyan(`${program.name()} --help`)} to see all options.`
+        );
+        process.exit(1);
+    }
+
+    createApp(projectName, bootstrapURL);
 }
 
-createApp(projectName, bootstrapURL);
+async function createApp(name, url) {
+    const root = path.resolve(name);
 
-function getBootstrapFile(url, version) {
-    let _url = url.replace(':version', `-${version}` || '');
+    fs.ensureDirSync(name);
 
-    console.log(`Downloading the bootstrap from ${chalk.green(_url)}`);
-    console.log('This might take a couple of minutes.');
+    console.log(`Creating a new simple-node-framework app in ${chalk.yellow(root)}.`);
     console.log();
 
-    const request = require('request');
-    const stream = request(_url);
+    const stream = downloadBootstrapFile(bootstrapURL, program.release);
 
-    return stream;
+    await extractStream(stream, root);
+
+    replaceParameters(root, name, program.port);
+
+    if (!program.disableInstall)
+        await npmInstall(root);
+
+    success(root);
 }
 
 async function extractStream(stream, dest) {
@@ -75,6 +87,31 @@ async function extractStream(stream, dest) {
     });
 }
 
+async function npmInstall(path) {
+    process.chdir(path)
+    console.log(`Running npm install...`);
+    console.log('This might take a couple of minutes.');
+    console.log();
+    const {
+        stdout
+    } = await execa('npm', ['i']);
+    console.log(stdout);
+    console.log();
+}
+
+function downloadBootstrapFile(url, version) {
+    let _url = url.replace(':version', (version) ? `${version}` : '');
+
+    console.log(`Downloading the bootstrap from ${chalk.green(_url)}`);
+    console.log('This might take a couple of minutes.');
+    console.log();
+
+    const request = require('request');
+    const stream = request(_url);
+
+    return stream;
+}
+
 function replaceParameters(path, name, port) {
     console.log(`Replacing default parameters ${chalk.green(path + '/**')}`);
 
@@ -85,11 +122,11 @@ function replaceParameters(path, name, port) {
         to: [name, port],
     });
 
-    if (program.disableMongo || program.disableRedis) {
+    if (program.disableDatabase || program.disableRedis) {
         const configPath = `${path}/api/config/env/default.json`;
         const conf = require(configPath);
 
-        if (program.disableMongo) {
+        if (program.disableDatabase) {
             delete conf.db;
         }
 
@@ -114,38 +151,6 @@ function replaceParameters(path, name, port) {
 
     changes.map(change => console.log(`File changed ${chalk.blue(change)}`));
     console.log();
-}
-
-async function npmInstall(path) {
-    process.chdir(path)
-    console.log(`Running npm install...`);
-    console.log('This might take a couple of minutes.');
-    console.log();
-    const {
-        stdout
-    } = await execa('npm', ['i']);
-    console.log(stdout);
-    console.log();
-}
-
-async function createApp(name, url) {
-    const root = path.resolve(name);
-
-    fs.ensureDirSync(name);
-
-    console.log(`Creating a new simple-node-framework app in ${chalk.yellow(root)}.`);
-    console.log();
-
-    const stream = getBootstrapFile(bootstrapURL, program.release);
-
-    await extractStream(stream, root);
-
-    replaceParameters(root, name, program.port);
-
-    if (!program.disableInstall)
-        await npmInstall(root);
-
-    success(root);
 }
 
 function success(path) {
