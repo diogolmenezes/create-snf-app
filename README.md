@@ -10,7 +10,7 @@ cd my-app
 npm start
 ```
 
-`If you've previously installed create-snf-app globally via npm install -g create-snf-app, we recommend you uninstall the package using npm uninstall -g create-snf-app to ensure that npx always uses the latest version.`
+>If you've previously installed create-snf-app globally via npm install -g create-snf-app, we recommend you uninstall the package using npm uninstall -g create-snf-app to ensure that npx always uses the latest version.`
 
 npx comes with npm 5.2+ and higher if you use npm 5.1 or earlier, you can't use npx. Instead, install create-snf-app globally:
 
@@ -24,8 +24,9 @@ Now you can run:
 
 `npx create-snf-app <project-directory> [options]`
 
+### Options
+
 ```shell
-Options:
 
   -V, --version          output the version number
   -p, --port <n>         server port
