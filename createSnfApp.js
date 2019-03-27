@@ -23,9 +23,13 @@ const program = new commander.Command(packageJson.name)
     })
     .option('-p, --port <n>', 'Define the server port', parseInt)
     .option('-r, --release <value>', 'SNF bootstrap release number')
+    .option('--disable-mongo', 'Whithout mongo support (you can turn it on later)')
+    .option('--disable-redis', 'Whithout redis, cache and session support (you can turn it on later)')
+    .option('--disable-cache', 'Whithout cache support (you can turn it on later)')
+    .option('--disable-session', 'Whithout session support (you can turn it on later)')
+    .option('--disable-install', 'Dont run npm install')
     .allowUnknownOption()
     .parse(process.argv);
-
 
 if (typeof projectName === 'undefined') {
     console.error('Please specify the project directory:');
@@ -81,6 +85,33 @@ function replaceParameters(path, name, port) {
         to: [name, port],
     });
 
+    if (program.disableMongo || program.disableRedis) {
+        const configPath = `${path}/api/config/env/default.json`;
+        const conf = require(configPath);
+
+        if (program.disableMongo) {
+            delete conf.db;
+        }
+
+        if (program.disableRedis) {
+            delete conf.redis;
+            delete conf.cache;
+            delete conf.session;
+        }
+
+        if (program.disableCache) {
+            delete conf.cache;
+        }
+
+        if (program.disableSession) {
+            delete conf.session;
+        }
+
+        fs.writeFileSync(configPath, JSON.stringify(conf, null, 4), 'utf8', function (err) {
+            if (err) return console.log(err);
+        });
+    }
+
     changes.map(change => console.log(`File changed ${chalk.blue(change)}`));
     console.log();
 }
@@ -98,7 +129,7 @@ async function npmInstall(path) {
 }
 
 async function createApp(name, url) {
-    const root = path.resolve(name);    
+    const root = path.resolve(name);
 
     fs.ensureDirSync(name);
 
@@ -111,13 +142,14 @@ async function createApp(name, url) {
 
     replaceParameters(root, name, program.port);
 
-    await npmInstall(root);
+    if (!program.disableInstall)
+        await npmInstall(root);
 
     success(root);
 }
 
 function success(path) {
-    const configPath = `${path}/api/config/default.js`;
+    const configPath = `${path}/api/config/env/default.js`;
 
     console.log(`${chalk.green('SUCCESS! Get started:')}`);
     console.log();
