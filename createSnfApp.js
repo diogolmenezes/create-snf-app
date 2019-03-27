@@ -25,13 +25,13 @@ function init() {
         .action(name => {
             projectName = name;
         })
-        .option('-p, --port <n>', 'Define the server port', parseInt)
-        .option('-r, --release <value>', 'SNF bootstrap release number')
-        .option('--disable-database', 'Whithout database support (you can turn it on later)')
-        .option('--disable-redis', 'Whithout redis, cache and session support (you can turn it on later)')
-        .option('--disable-cache', 'Whithout cache support (you can turn it on later)')
-        .option('--disable-session', 'Whithout session support (you can turn it on later)')
-        .option('--disable-install', 'Dont run npm install')
+        .option('-p, --port <n>', 'server port', parseInt)
+        .option('-r, --release <value>', 'bootstrap release number')
+        .option('--disable-database', 'whithout database support (you can turn it on later)')
+        .option('--disable-redis', 'whithout redis, cache and session support (you can turn it on later)')
+        .option('--disable-cache', 'whithout cache support (you can turn it on later)')
+        .option('--disable-session', 'whithout session support (you can turn it on later)')
+        .option('--disable-install', 'dont run npm install')
         .allowUnknownOption()
         .parse(process.argv);
 
