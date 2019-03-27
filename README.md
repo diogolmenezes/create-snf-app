@@ -38,3 +38,45 @@ Now you can run:
   --disable-install      dont run npm install
   -h, --help             output usage information
 ```
+
+## Output
+
+Running any of these commands will create a directory called my-app inside the current folder. Inside that directory, it will generate the initial simple-node-framework project structure and install the transitive dependencies:
+
+```shell
+├── api
+│   ├── config
+│   │   ├── custom-server.js
+│   │   └── env
+│   │       └── default.json
+│   └── modules
+│       └── sample-module
+│           ├── controller.js
+│           ├── model
+│           │   └── customer.js
+│           ├── repository
+│           │   └── customer-repository.js
+│           ├── route.js
+│           ├── service
+│           │   └── customer-service.js
+│           └── test
+│               ├── integration
+│               │   └── controller.integration.js
+│               └── unit
+│                   └── controller.unit.js
+├── doc
+│   ├── favicon-16x16.png
+│   ├── favicon-32x32.png
+│   ├── index.html
+│   ├── oauth2-redirect.html
+│   ├── README.md
+│   ├── swagger.json
+│   ├── swagger-ui-bundle.js
+│   ├── swagger-ui.css
+│   ├── swagger-ui-standalone-preset.js
+│   └── swagger.yaml
+├── index.js
+├── logs
+├── README.md
+└── package.json
+```

@@ -118,7 +118,7 @@ function replaceParameters(path, name, port) {
     const changes = replace.sync({
         verbose: true,
         files: `${path}/**`,
-        from: ['my-application', 8094],
+        from: [/my-application/g, /8094/g],
         to: [name, port],
     });
 
