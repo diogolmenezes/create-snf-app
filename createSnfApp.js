@@ -121,8 +121,8 @@ function success(path) {
 
     console.log(`${chalk.green('SUCCESS! Get started:')}`);
     console.log();
-    console.log(`1. Change configurarions at ${chalk.blue(configPath)}. Remove mongo and redis nodes if you dont need it`);
-    console.log(`2. Go to ${chalk.blue(path)} directory and run ${chalk.blue('npm start')} to start your app`);
+    console.log(`  1. Change configurarions at ${chalk.blue(configPath)}. Remove mongo and redis nodes if you dont need it`);
+    console.log(`  2. Go to ${chalk.blue(path)} directory and run ${chalk.blue('npm start')} to start your app`);
     console.log();
     console.log('Documentation:');
     console.log();
