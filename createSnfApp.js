@@ -87,6 +87,7 @@ function replaceParameters(path, name, port) {
 
 async function createApp(name, url) {
     const root = path.resolve(name);
+    const configPath = `${root}/api/config/default.js`;
 
     fs.ensureDirSync(name);
 
@@ -101,7 +102,11 @@ async function createApp(name, url) {
 
     await npmInstall(root);
 
-    console.log(`${chalk.green('SUCCESS!')} Go to ${chalk.blue(name)} directory and run ${chalk.blue('npm start')} to start your app`);
+
+    console.log(`${chalk.green('SUCCESS! Get started:')}`);
+    console.log();
+    console.log(`1. Change configurarions at ${chalk.blue(configPath)}. Remove mongo and redis nodes you you dont need it`);
+    console.log(`2. Go to ${chalk.blue(root)} directory and run ${chalk.blue('npm start')} to start your app`);
     console.log();
     console.log('Documentation:');
     console.log();
