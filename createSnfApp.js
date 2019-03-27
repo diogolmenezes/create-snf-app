@@ -7,8 +7,8 @@ const commander = require('commander');
 const packageJson = require('./package.json');
 const fs = require('fs-extra');
 const path = require('path');
-const hyperquest = require('hyperquest');
 const unpack = require('tar-pack').unpack;
+const replace = require('replace-in-file');
 
 let projectName;
 let bootstrapURL = 'https://github.com/diogolmenezes/create-snf-app/blob/master/packages/snf.tar.gz?raw=true';
@@ -46,19 +46,17 @@ createApp(projectName, bootstrapURL);
 function getBootstrapFile(url, version) {
     let _url = url.replace(':version', `-${version}` || '');
 
-    console.log(`Downloading the bootstrap from ${chalk.green(_url)}`);
+    console.log(`Downloading the bootstrap from ${chalk.green(_url)}`);    
     console.log('This might take a couple of minutes.');
+    console.log();
 
-    // if you want to download a file that its not hosted at github just use this
-    // let stream = hyperquest(_url);
-    // if you want to download github hosted files use this:
-    const request = require('hyperdirect')(2);
-    const stream = request(_url);
+    const request = require('request');
+    const stream  = request(_url);
 
     return stream;
 }
 
-function extractStream(stream, dest) {
+async function extractStream(stream, dest) {
     return new Promise((resolve, reject) => {
         stream.pipe(
             unpack(dest, err => {
@@ -72,19 +70,33 @@ function extractStream(stream, dest) {
     });
 }
 
-function createApp(name, url) {
+function replaceParameters(path, name, port) {
+    console.log(`Replacing default parameters ${chalk.green(path + '/**')}`);
+
+    const changes = replace.sync({
+        verbose: true,
+        files: `${path}/**`,
+        from: ['my-application', 8094],
+        to: [name, port],
+    });
+
+    changes.map(change => console.log(`File changed ${chalk.blue(change)}`));
+    console.log();
+}
+
+async function createApp(name, url) {
     const root = path.resolve(name);
 
     fs.ensureDirSync(name);
 
-    console.log(`Creating a new simple-node-framework app in ${chalk.green(root)}.`);
+    console.log(`Creating a new simple-node-framework app in ${chalk.yellow(root)}.`);
     console.log();
 
     const stream = getBootstrapFile(bootstrapURL, program.release);
 
-    extractStream(stream, root);
+    await extractStream(stream, root);
 
-    // // substituir
+    replaceParameters(root, name, program.port);
 
     console.log(`${chalk.green('Success!')}`);
 }
