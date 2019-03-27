@@ -46,8 +46,7 @@ createApp(projectName, bootstrapURL);
 function getBootstrapFile(url, version) {
     let _url = url.replace(':version', `-${version}` || '');
 
-    console.log(`Downloading the bootstrap from ${_url}`);
-
+    console.log(`Downloading the bootstrap from ${chalk.green(_url)}`);
     console.log('This might take a couple of minutes.');
 
     // if you want to download a file that its not hosted at github just use this
@@ -88,5 +87,5 @@ function createApp(name, url) {
 
     // // substituir
 
-    console.log(`Success!`);
+    console.log(`${chalk.green('Success!')}`);
 }
