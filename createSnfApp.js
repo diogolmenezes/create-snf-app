@@ -71,7 +71,7 @@ async function createApp(name, url) {
     if (!program.disableInstall)
         await npmInstall(root);
 
-    success(root);
+    success(root, name);
 }
 
 async function extractStream(stream, dest) {
@@ -158,13 +158,14 @@ function replaceParameters(path, name, port) {
     console.log();
 }
 
-function success(path) {
-    const configPath = `${path}/api/config/env/default.js`;
+function success(path, name) {
+    const configPath = `${name}/api/config/env/default.js`;
+    const install = (program.disableInstall) ? 'npm install &&' : '';
 
-    console.log(`${chalk.green('SUCCESS! Get started:')}`);
+    console.log(`${chalk.green(`SUCCESS! Application installed at ${chalk.blue(path)}`)}`);
     console.log();
     console.log(`  1. Change configurations at ${chalk.blue(configPath)}.`);
-    console.log(`  2. Go to ${chalk.blue(path)} directory and run ${chalk.blue('npm start')} to start your app`);
+    console.log(`  2. Start your app ${chalk.blue(`cd ${name} && ${install} npm start`)}`);
     console.log();
     console.log('Documentation:');
     console.log();
