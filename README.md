@@ -5,7 +5,14 @@ create-snf-app is an officially supported way to create [simple-node-framework](
 ## Quick Start
 
 ```shell
-npx create-snf-app my-app --disable-database --disable-redis -p 8091
+npx create-snf-app my-app -p 8091
+cd my-app
+npm start
+```
+With database and Redis enabled
+
+```shell
+npx create-snf-app my-app --enable-database --enable-redis -p 8091
 cd my-app
 npm start
 ```

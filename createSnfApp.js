@@ -28,10 +28,10 @@ function init() {
         })
         .option('-p, --port <n>', 'server port', parseInt)
         .option('-r, --release <value>', 'bootstrap release number')
-        .option('--disable-database', 'whithout database support (you can turn it on later)')
-        .option('--disable-redis', 'whithout redis, cache and session support (you can turn it on later)')
-        .option('--disable-cache', 'whithout cache support (you can turn it on later)')
-        .option('--disable-session', 'whithout session support (you can turn it on later)')
+        .option('--enable-database', 'enable mongodb support')
+        .option('--enable-redis', 'enable redis support')
+        .option('--enable-cache', 'enable cache support')
+        .option('--enable-session', 'enable session support')
         .option('--disable-install', 'dont run npm install')
         .allowUnknownOption()
         .parse(process.argv);
@@ -123,36 +123,34 @@ function replaceParameters(path, name, port) {
         to: [name, port],
     });
 
-    if (program.disableDatabase || program.disableRedis) {
-        const environments = ['default', 'testing', 'staging', 'production'];
+    const environments = ['default', 'testing', 'staging', 'production'];
 
-        environments.map(env => {
-            const configPath = `${path}/api/config/env/${env}.json`;
-            const conf = require(configPath);
+    environments.map(env => {
+        const configPath = `${path}/api/config/env/${env}.json`;
+        const conf = require(configPath);
 
-            if (program.disableDatabase) {
-                delete conf.db;
-            }
+        if (!program.enableDatabase) {
+            delete conf.db;
+        }
 
-            if (program.disableRedis) {
-                delete conf.redis;
-                delete conf.cache;
-                delete conf.session;
-            }
+        if (!program.enableRedis) {
+            delete conf.redis;
+            delete conf.cache;
+            delete conf.session;
+        }
 
-            if (program.disableCache) {
-                delete conf.cache;
-            }
+        if (!program.enableCache) {
+            delete conf.cache;
+        }
 
-            if (program.disableSession) {
-                delete conf.session;
-            }
+        if (!program.enableSession) {
+            delete conf.session;
+        }
 
-            fs.writeFileSync(configPath, JSON.stringify(conf, null, 4), 'utf8', function (err) {
-                if (err) return console.log(err);
-            });
+        fs.writeFileSync(configPath, JSON.stringify(conf, null, 4), 'utf8', function (err) {
+            if (err) return console.log(err);
         });
-    }
+    });
 
     changes.map(change => console.log(`File changed ${chalk.blue(change)}`));
     console.log();
