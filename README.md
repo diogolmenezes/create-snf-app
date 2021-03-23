@@ -57,10 +57,10 @@ Go to the [docs](https://github.com/diogolmenezes/simple-node-bootstrap) if do y
 │   ├── config
 │   │   ├── custom-server.js
 │   │   └── env
-│   │       ├── default.json
-│   │       ├── production.json
-│   │       ├── staging.json
-│   │       └── testing.json
+│   │       ├── default.js
+│   │       ├── production.js
+│   │       ├── staging.js
+│   │       └── testing.js
 │   └── modules
 │       └── sample-module
 │           ├── controller.js

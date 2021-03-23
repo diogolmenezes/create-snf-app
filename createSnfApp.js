@@ -108,7 +108,10 @@ function downloadBootstrapFile(url, version) {
     console.log();
 
     const request = require('request');
-    const stream = request(_url);
+    const stream = request({ 
+        url: _url,
+        strictSSL: false
+    });
 
     return stream;
 }
@@ -126,7 +129,7 @@ function replaceParameters(path, name, port) {
     const environments = ['default', 'testing', 'staging', 'production'];
 
     environments.map(env => {
-        const configPath = `${path}/api/config/env/${env}.json`;
+        const configPath = `${path}/api/config/env/${env}.js`;
         const conf = require(configPath);
 
         if (!program.enableDatabase) {
