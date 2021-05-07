@@ -107,12 +107,8 @@ function downloadBootstrapFile(url, version) {
     console.log('This might take a couple of minutes.');
     console.log();
 
-    const request = require('request');
-    const stream = request({ 
-        url: _url,
-        strictSSL: false
-    });
-
+    const got = require('got');
+    const stream = got.stream(_url);
     return stream;
 }
 

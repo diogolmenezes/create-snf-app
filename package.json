@@ -1,6 +1,6 @@
 {
   "name": "create-snf-app",
-  "version": "1.0.28",
+  "version": "1.0.34",
   "keywords": [
     "simple-node-framework"
   ],
@@ -21,6 +21,9 @@
     "commander": "2.19.0",
     "execa": "^1.0.0",
     "fs-extra": "^7.0.1",
+    "got": "^11.8.2",
+    "http": "0.0.1-security",
+    "https": "^1.0.0",
     "path": "^0.12.7",
     "replace-in-file": "^3.4.4",
     "request": "^2.88.0",
