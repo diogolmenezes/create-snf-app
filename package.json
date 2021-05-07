@@ -1,6 +1,6 @@
 {
   "name": "create-snf-app",
-  "version": "1.0.36",
+  "version": "1.0.37",
   "keywords": [
     "simple-node-framework"
   ],
@@ -27,6 +27,6 @@
     "path": "^0.12.7",
     "replace-in-file": "^3.4.4",
     "request": "^2.88.0",
-    "tar-pack": "^3.4.1"
+    "unzip-stream": "^0.3.1",
   }
 }

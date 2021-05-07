@@ -9,15 +9,18 @@ const packageJson = require('./package.json');
 const fs = require('fs-extra');
 const path = require('path');
 const unpack = require('tar-pack').unpack;
+const decompress = require('decompress');
+const unzip = require('unzip-stream');
 const replace = require('replace-in-file');
 const execa = require('execa');
-const bootstrapURL = 'https://github.com/diogolmenezes/create-snf-app/blob/master/packages/snf:version.tar.gz?raw=true';
+const { resolve } = require('path');
+const bootstrapURL = 'https://github.com/diogolmenezes/create-snf-app/blob/master/packages/snf:version.zip?raw=true';
 
 // start create-nfs-app
 init();
 
 function init() {
-    let projectName = 'my-app';
+    let projectName;
 
     program = new commander.Command(packageJson.name)
         .version(packageJson.version)
@@ -62,7 +65,7 @@ async function createApp(name, url) {
     console.log(`Creating a new simple-node-framework app in ${chalk.yellow(root)}.`);
     console.log();
 
-    const stream = await downloadBootstrapFile(bootstrapURL, program.release);
+    const stream = downloadBootstrapFile(bootstrapURL, program.release);
 
     await extractStream(stream, root);
 
@@ -72,20 +75,6 @@ async function createApp(name, url) {
         await npmInstall(root);
 
     success(root, name);
-}
-
-async function extractStream(stream, dest) {
-    return new Promise((resolve, reject) => {
-        stream.pipe(
-            unpack(dest, err => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(dest);
-                }
-            })
-        );
-    });
 }
 
 async function npmInstall(path) {
@@ -102,16 +91,20 @@ async function npmInstall(path) {
 
 function downloadBootstrapFile(url, version) {
     let _url = url.replace(':version', (version) ? `${version}` : '');
-
     console.log(`Downloading the bootstrap from ${chalk.green(_url)}`);
     console.log('This might take a couple of minutes.');
     console.log();
-
-    const request = require('request');
-    const stream = request(_url);
-    // const got = require('got');
-    // const stream = got.stream(_url);
+    const got = require('got');
+    const stream = got.stream(_url);
     return stream;
+}
+
+async function extractStream(stream, dest) {
+    return new Promise((resolve, reject) => {
+        stream.pipe(unzip.Extract({ path: dest })).on('finish',() => {
+            resolve();
+        });
+    });
 }
 
 function replaceParameters(path, name, port) {
