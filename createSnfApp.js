@@ -8,8 +8,6 @@ const commander = require('commander');
 const packageJson = require('./package.json');
 const fs = require('fs-extra');
 const path = require('path');
-const unpack = require('tar-pack').unpack;
-const decompress = require('decompress');
 const unzip = require('unzip-stream');
 const replace = require('replace-in-file');
 const execa = require('execa');
@@ -20,7 +18,7 @@ const bootstrapURL = 'https://github.com/diogolmenezes/create-snf-app/blob/maste
 init();
 
 function init() {
-    let projectName;
+    let projectName = 'my-app';
 
     program = new commander.Command(packageJson.name)
         .version(packageJson.version)
@@ -141,7 +139,9 @@ function replaceParameters(path, name, port) {
             delete conf.session;
         }
 
-        fs.writeFileSync(configPath, JSON.stringify(conf, null, 4), 'utf8', function (err) {
+        const content = `module.exports = ${JSON.stringify(conf, null, 4)}`
+
+        fs.writeFileSync(configPath, content, 'utf8', function (err) {
             if (err) return console.log(err);
         });
     });
