@@ -1,11 +1,11 @@
 {
   "name": "create-snf-app",
-  "version": "1.0.35",
+  "version": "1.0.36",
   "keywords": [
     "simple-node-framework"
   ],
   "description": "Create simple-node-framework apps.",
-  "license": "MIT",
+  "lice./nse": "MIT",
   "engines": {
     "node": ">=8"
   },

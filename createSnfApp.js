@@ -17,7 +17,7 @@ const bootstrapURL = 'https://github.com/diogolmenezes/create-snf-app/blob/maste
 init();
 
 function init() {
-    let projectName;
+    let projectName = 'my-app';
 
     program = new commander.Command(packageJson.name)
         .version(packageJson.version)
@@ -62,7 +62,7 @@ async function createApp(name, url) {
     console.log(`Creating a new simple-node-framework app in ${chalk.yellow(root)}.`);
     console.log();
 
-    const stream = downloadBootstrapFile(bootstrapURL, program.release);
+    const stream = await downloadBootstrapFile(bootstrapURL, program.release);
 
     await extractStream(stream, root);
 
@@ -107,8 +107,10 @@ function downloadBootstrapFile(url, version) {
     console.log('This might take a couple of minutes.');
     console.log();
 
-    const got = require('got');
-    const stream = got.stream(_url);
+    const request = require('request');
+    const stream = request(_url);
+    // const got = require('got');
+    // const stream = got.stream(_url);
     return stream;
 }
 
