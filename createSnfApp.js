@@ -11,7 +11,6 @@ const path = require('path');
 const unzip = require('unzip-stream');
 const replace = require('replace-in-file');
 const execa = require('execa');
-const { resolve } = require('path');
 const bootstrapURL = 'https://github.com/diogolmenezes/create-snf-app/blob/master/packages/snf:version.zip?raw=true';
 
 // start create-nfs-app
@@ -33,6 +32,7 @@ function init() {
         .option('--enable-redis', 'enable redis support')
         .option('--enable-cache', 'enable cache support')
         .option('--enable-session', 'enable session support')
+        .option('--enable-typescript', 'enable typescript support')
         .option('--disable-install', 'dont run npm install')
         .allowUnknownOption()
         .parse(process.argv);
@@ -137,6 +137,17 @@ function replaceParameters(path, name, port) {
 
         if (!program.enableSession) {
             delete conf.session;
+        }
+
+        if (program.enableTypescript) {
+            fs.mkdirpSync(`${path}/dist`);
+            const tsConfiguration =  {
+                app: {
+                    name
+                },
+                dir: '/dist'
+            }
+            fs.writeFileSync(`${path}/.snf`, JSON.stringify(tsConfiguration));
         }
 
         const content = `module.exports = ${JSON.stringify(conf, null, 4)}`
