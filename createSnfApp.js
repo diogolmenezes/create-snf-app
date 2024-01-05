@@ -115,7 +115,7 @@ function replaceParameters(path, name, port) {
         to: [name, port],
     });
 
-    const environments = ['default', 'testing', 'staging', 'production'];
+    const environments = ['default', 'development', 'staging', 'production'];
 
     environments.map(env => {
         const configPath = `${path}/api/config/env/${env}.js`;
